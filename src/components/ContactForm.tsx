@@ -1,7 +1,8 @@
-
 import React, { useState } from 'react';
 import { Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+// Add EmailJS import
+import emailjs from '@emailjs/browser';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -24,22 +25,52 @@ const ContactForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
+    // EmailJS integration
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await emailjs.send(
+        'service_mq65q4g', // replace with your EmailJS service ID
+        'template_chuqvks', // replace with your EmailJS template ID
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+        },
+        '01fD0sVKws5ThkOZD' // replace with your EmailJS public key (user ID)
+      );
+
       toast({
-        title: "Message Sent Successfully!",
-        description: "Thank you for contacting us. We'll get back to you within 24 hours.",
-      });
-      
+  title: "✅ Message Sent Successfully!",
+  description: "Thank you for contacting us. We'll get back to you within 24 hours.",
+  variant: "default",
+  style: {
+    backgroundColor: "#4CAF50", // Green for success
+    color: "#fff",
+    padding: "12px",
+    borderRadius: "8px",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+    fontSize: "16px",
+  },
+  duration: 5000, // Auto-dismiss after 5 seconds
+  });
+
       setFormData({ name: '', phone: '', email: '', message: '' });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Something went wrong. Please try again later.",
-        variant: "destructive",
-      });
+  title: "❌ Error",
+  description: "Something went wrong. Please try again later.",
+  variant: "destructive",
+  style: {
+    backgroundColor: "#FF4C4C", // Red for error
+    color: "#fff",
+    padding: "12px",
+    borderRadius: "8px",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+    fontSize: "16px",
+    fontWeight: "bold",
+  },
+  duration: 5000, // Auto-dismiss after 5 seconds 
+});
     } finally {
       setIsSubmitting(false);
     }
